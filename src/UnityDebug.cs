@@ -29,14 +29,21 @@ using System;
 
 public class UnityDebug
 {
+    public const float TWO_PI = (float)(2.0f * Math.PI);
+
     public UnityDebug()
     {
+    }
+
+    public static void DrawSquare(Vector2 origin, float size, Color color, float duration)
+    {
+        DrawSquare(new Vector3(origin.x, origin.y, 0.0f), size, color, duration);
     }
 
     public static void DrawSquare(Vector3 origin, float size, Color color, float duration)
     {
         float halfSize = size / 2.0f;
-        
+
         Vector3 topLeft = Vector3.zero;
         topLeft.x = origin.x - halfSize;
         topLeft.y = origin.y + halfSize;
@@ -57,5 +64,43 @@ public class UnityDebug
         Debug.DrawLine(topRight, bottomRight, color, duration);
         Debug.DrawLine(bottomRight, bottomLeft, color, duration);
         Debug.DrawLine(bottomLeft, topLeft, color, duration);
+    }
+
+    public static void DrawCircle(Vector2 origin, float diameter, float quality, Color color, float duration)
+    {
+        DrawCircle(new Vector3(origin.x, origin.y, 0.0f), diameter, quality, color, duration);
+    }
+
+    public static void DrawCircle(Vector3 origin, float diameter, float quality, Color color, float duration)
+    {
+        quality = Mathf.Clamp(quality, 0.0f, 1.0f);
+        int numSides = (int)(360.0f * quality);
+
+        DrawShape(origin, diameter, numSides, color, duration);
+    }
+
+    public static void DrawShape(Vector3 origin, float diameter, int numSides, Color color, float duration)
+    {
+        float radius = diameter / 2.0f;
+
+        Vector3 firstPoint = Vector3.zero;
+        firstPoint.x = radius + origin.x;
+        firstPoint.y = origin.y;
+
+        Vector3 prevPoint = firstPoint;
+        Vector3 curPoint = Vector3.zero;
+        float angle = 0.0f;
+
+        for (int i = 1; i < numSides; ++i)
+        {
+            angle = i * (TWO_PI / numSides);
+            curPoint.x = (Mathf.Cos(angle) * radius) + origin.x;
+            curPoint.y = (Mathf.Sin(angle) * radius) + origin.y;
+            Debug.DrawLine(curPoint, prevPoint, color, duration);
+
+            prevPoint = curPoint;
+        }
+
+        Debug.DrawLine(firstPoint, prevPoint, color, duration);
     }
 }
